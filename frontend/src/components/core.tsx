@@ -144,16 +144,21 @@ export function PrimaryButton({
 }
 
 export function GhostButton({
-  label, onPress, testID, icon,
-}: { label: string; onPress: () => void; testID: string; icon?: string }) {
+  label, onPress, testID, icon, loading, disabled,
+}: { label: string; onPress: () => void; testID: string; icon?: string; loading?: boolean; disabled?: boolean }) {
   const styles = useButtonStyles();
   const { colors } = useTheme();
   return (
-    <PressableScale testID={testID} onPress={onPress} style={styles.ghost}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        {icon ? <Ionicons name={icon as any} size={18} color={colors.onSurface} /> : null}
-        <Text style={styles.ghostText}>{label}</Text>
-      </View>
+    <PressableScale testID={testID} onPress={onPress} disabled={disabled || loading}
+      style={[styles.ghost, (disabled || loading) && { opacity: 0.55 }]}>
+      {loading ? (
+        <ActivityIndicator color={colors.onSurface} />
+      ) : (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          {icon ? <Ionicons name={icon as any} size={18} color={colors.onSurface} /> : null}
+          <Text style={styles.ghostText}>{label}</Text>
+        </View>
+      )}
     </PressableScale>
   );
 }

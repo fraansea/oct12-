@@ -32,7 +32,18 @@ Complete production-ready roommate / shared-living management app: household cho
 - Iteration 1: all flows pass after tester fixed realtime duplicate-channel crash; FK gap found
 - Iteration 2: FK verified, member names/splits/notifications/household/budget all pass; pytest 7/7 backend
 
-## Backlog
+## Restore & fixes (2026-10-03)
+- App arrived as a zip with **no `.env` files** → both services were down. Restored:
+  - `/app/frontend/.env` (backend URL + packager host + EXPO_PUBLIC_SUPABASE_URL/KEY)
+  - `/app/backend/.env` (SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, EMERGENT_LLM_KEY)
+- New Supabase project `qgenemhetpmfunphlrbe` — verified full schema already applied (all tables + RPCs present, no data). Backend healthy (`/api/health` ok), frontend welcome/login render.
+- **Google sign-in fixed (code):** switched Supabase client to `flowType: "pkce"`; welcome.tsx now uses `Linking.createURL("auth/callback")` (was hardcoded wrong scheme `roomie://`) and completes the PKCE `exchangeCodeForSession(code)` on native; web auto-exchanges. GhostButton gained loading state.
+- **Open user-side Supabase config (cannot be done from code):**
+  - "Confirm email" is ON → new signups get `email_not_confirmed` on login. Disable it (Auth → Providers → Email) for immediate login, or confirm via email.
+  - Google: enable provider + add Google Cloud OAuth client + redirect URLs (see test_credentials.md).
+
+## Backlog (static)
+
 - **P0 (user-side):** enable Google provider (OAuth client steps already provided); rotate the leaked sb_secret key
 - **P1 (Phase 2):** calendar (month/agenda), shared notes (sensitive hidden), AI meal planner (daily/3-day/weekly), notification settings per category, reminders, universal search
 - **P2 (Phase 3):** analytics cards, push notifications (needs native build), auto low-stock grocery adds, multiple households, household photos (object storage), PWA install/offline cache, desktop sidebar

@@ -22,6 +22,9 @@ export const supabase = createClient(url, key, {
     storage: supaStorage,
     autoRefreshToken: true,
     persistSession: true,
+    // PKCE is required for native Google OAuth (code → session exchange).
+    flowType: "pkce",
+    // On web Supabase auto-exchanges the ?code= in the return URL.
     detectSessionInUrl: Platform.OS === "web",
   },
 });

@@ -1,13 +1,17 @@
-import { Text, View, Platform, Linking } from "react-native";
+import { Text, View, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
 import { APP_NAME } from "@/src/config";
 import { useApp } from "@/src/context/AppContext";
+import { supabase } from "@/src/lib/supabase";
 import { PrimaryButton, GhostButton, useToast } from "@/src/components/core";
 import { useTheme, spacing, radius } from "@/src/theme";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Welcome() {
   const router = useRouter();
@@ -20,7 +24,10 @@ export default function Welcome() {
   async function handleGoogle() {
     setGoogleLoading(true);
     try {
-      const redirectTo = Platform.OS === "web" ? window.location.origin : "roomie://auth/callback";
+      // Web: redirect to Google and let Supabase auto-exchange the ?code= on return.
+      // Native: deep-link back into the app, then exchange the code for a session (PKCE).
+      const redirectTo =
+        Platform.OS === "web" ? window.location.origin + "/" : Linking.createURL("auth/callback");
       const url = await signInWithGoogle(redirectTo);
       if (!url) throw new Error("Could not start Google sign-in");
       if (Platform.OS === "web") {
@@ -28,7 +35,18 @@ export default function Welcome() {
         return;
       }
       const result = await WebBrowser.openAuthSessionAsync(url, redirectTo);
-      if (result.type !== "success") toast("Google sign-in was cancelled", "info");
+      if (result.type === "success" && result.url) {
+        const code = Linking.parse(result.url).queryParams?.code;
+        if (typeof code === "string") {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw new Error(error.message);
+          // AuthGate in the root layout handles navigation once the session is set.
+        } else {
+          toast("Google sign-in didn't complete", "error");
+        }
+      } else if (result.type === "cancel" || result.type === "dismiss") {
+        toast("Google sign-in was cancelled", "info");
+      }
     } catch (e: any) {
       toast(e.message ?? "Google sign-in is not set up yet", "error");
     } finally {
@@ -59,7 +77,7 @@ export default function Welcome() {
         </View>
         <View style={{ gap: spacing.sm }}>
           <PrimaryButton testID="welcome-get-started" label="Get started" onPress={() => router.push("/(auth)/signup")} />
-          <GhostButton testID="welcome-google" label="Continue with Google" icon="logo-google" onPress={handleGoogle} />
+          <GhostButton testID="welcome-google" label="Continue with Google" icon="logo-google" onPress={handleGoogle} loading={googleLoading} />
           <GhostButton testID="welcome-login" label="I already have an account" onPress={() => router.push("/(auth)/login")} />
         </View>
       </View>
@@ -68,4 +86,3 @@ export default function Welcome() {
 }
 
 void radius;
-void Linking;
