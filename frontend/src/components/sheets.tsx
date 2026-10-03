@@ -3,12 +3,25 @@ import {
   Animated, Easing, KeyboardAvoidingView, Modal, PanResponder, Platform,
   Pressable, StyleSheet, Text, View,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import Ionicons from "@react-native-vector-icons/ionicons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { radius, spacing, useTheme } from "@/src/theme";
 import { PrimaryButton, GhostButton } from "@/src/components/core";
 
 const HIDDEN = 700;
+const DISMISS_THRESHOLD = 120;
+
+// Safe no-op on web; adds a subtle native tick on iOS/Android.
+function tick(style: Haptics.ImpactFeedbackStyle) {
+  if (Platform.OS === "web") return;
+  Haptics.impactAsync(style).catch(() => {});
+}
+
+// iOS-style rubber-band resistance for over-drag (pulling up past the rest point).
+function rubberband(overshoot: number, dim = 220) {
+  return (1 - 1 / (overshoot / dim + 1)) * dim;
+}
 
 // Bottom sheet mounted in a high-level Modal so tab bars never overlap it.
 // Uses React Native's core Animated (not Reanimated): Reanimated's animated
@@ -45,19 +58,52 @@ export function Sheet({
     }
   }, [visible, rendered, opacity, translateY]);
 
-  // Swipe the handle down to dismiss.
+  // Keep the latest onClose so the memoised PanResponder never calls a stale one.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  // Swipe the handle down to dismiss, with rubber-band resistance + haptics.
+  const armed = useRef(false); // true once the drag passes the dismiss threshold
   const pan = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
+      onPanResponderGrant: () => {
+        armed.current = false;
+      },
       onPanResponderMove: (_, g) => {
-        if (g.dy > 0) translateY.setValue(g.dy);
+        if (g.dy >= 0) {
+          translateY.setValue(g.dy);
+          const nowArmed = g.dy > DISMISS_THRESHOLD;
+          // Tick once, right as the user crosses into / out of the "release to close" zone.
+          if (nowArmed !== armed.current) {
+            armed.current = nowArmed;
+            tick(Haptics.ImpactFeedbackStyle.Light);
+          }
+        } else {
+          // Pulling up past the top: resist elastically instead of following 1:1.
+          translateY.setValue(-rubberband(-g.dy));
+        }
       },
       onPanResponderRelease: (_, g) => {
-        if (g.dy > 120 || g.vy > 0.8) {
-          onClose();
+        if (g.dy > DISMISS_THRESHOLD || g.vy > 0.8) {
+          tick(Haptics.ImpactFeedbackStyle.Medium);
+          onCloseRef.current();
         } else {
-          Animated.spring(translateY, { toValue: 0, useNativeDriver: true, tension: 120, friction: 18 }).start();
+          // Springy snap-back with a subtle overshoot for a rubber-band feel.
+          Animated.spring(translateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            tension: 160,
+            friction: 9,
+            restDisplacementThreshold: 0.5,
+            restSpeedThreshold: 0.5,
+          }).start();
         }
+        armed.current = false;
+      },
+      onPanResponderTerminate: () => {
+        Animated.spring(translateY, { toValue: 0, useNativeDriver: true, tension: 160, friction: 9 }).start();
+        armed.current = false;
       },
     }),
   ).current;
