@@ -42,8 +42,11 @@ Complete production-ready roommate / shared-living management app: household cho
   - "Confirm email" is ON → new signups get `email_not_confirmed` on login. Disable it (Auth → Providers → Email) for immediate login, or confirm via email.
   - Google: enable provider + add Google Cloud OAuth client + redirect URLs (see test_credentials.md).
 
-## Backlog (static)
+## Google sign-in verified (2026-10-03)
+- User configured Google provider in Supabase (client_id 348788962911-...). Verified server-side: `/auth/v1/authorize?provider=google` 302s to accounts.google.com. testing_agent (iteration_3) confirmed the in-app "Continue with Google" button launches the flow and reaches Google's sign-in page with correct client_id/redirect_uri/scope. Login screen reachable + renders.
+- Still pending (user-side): "Confirm email" toggle is still ON (email login returns email_not_confirmed); turn OFF in Auth → Providers → Email for immediate email logins. Ensure the exact preview origin shown in the browser is in Supabase → Redirect URLs (with /**).
 
+## Backlog (static)
 - **P0 (user-side):** enable Google provider (OAuth client steps already provided); rotate the leaked sb_secret key
 - **P1 (Phase 2):** calendar (month/agenda), shared notes (sensitive hidden), AI meal planner (daily/3-day/weekly), notification settings per category, reminders, universal search
 - **P2 (Phase 3):** analytics cards, push notifications (needs native build), auto low-stock grocery adds, multiple households, household photos (object storage), PWA install/offline cache, desktop sidebar
