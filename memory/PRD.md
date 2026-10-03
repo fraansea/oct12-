@@ -46,6 +46,11 @@ Complete production-ready roommate / shared-living management app: household cho
 - User configured Google provider in Supabase (client_id 348788962911-...). Verified server-side: `/auth/v1/authorize?provider=google` 302s to accounts.google.com. testing_agent (iteration_3) confirmed the in-app "Continue with Google" button launches the flow and reaches Google's sign-in page with correct client_id/redirect_uri/scope. Login screen reachable + renders.
 - Still pending (user-side): "Confirm email" toggle is still ON (email login returns email_not_confirmed); turn OFF in Auth → Providers → Email for immediate email logins. Ensure the exact preview origin shown in the browser is in Supabase → Redirect URLs (with /**).
 
+## Bug fix: bottom sheets couldn't be dismissed (2026-10-03)
+- Symptom (iOS/Expo Go): "Add grocery item" / "Quick add" sheets opened with no dim backdrop and could not be closed.
+- Root cause: `src/components/sheets.tsx` animated the scrim with react-native-reanimated inside an RN `<Modal>`; Reanimated animated styles aren't reliably committed inside a Modal on iOS, so the scrim was invisible AND un-tappable.
+- Fix: rewrote `Sheet` with React Native core `Animated` + `PanResponder`. Added visible close button (testID `sheet-close`), kept backdrop tap (testID `sheet-scrim`), added swipe-down-to-dismiss, and mount/unmount via internal `rendered` state so exit animation plays. Verified by testing_agent iteration_4 (X button, backdrop tap, action button, reopen all pass on web; swipe validated by code, not automatable on web).
+
 ## Backlog (static)
 - **P0 (user-side):** enable Google provider (OAuth client steps already provided); rotate the leaked sb_secret key
 - **P1 (Phase 2):** calendar (month/agenda), shared notes (sensitive hidden), AI meal planner (daily/3-day/weekly), notification settings per category, reminders, universal search

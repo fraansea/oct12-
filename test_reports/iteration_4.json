@@ -1,0 +1,36 @@
+{
+  "summary": "Frontend-only verification of the shared Sheet component via /_sheettest harness on mobile viewport (390x844). Validated open, close via X button (testID=sheet-close), close via backdrop tap (testID=sheet-scrim), close via primary action (testID=t-add), reopenability after each close, visible dimmed scrim (rgba(16,16,16,0.45), opacity=1), and absence of leftover overlay. All four acceptance criteria in the bug fix request pass on web. Swipe-down-to-dismiss could not be fully exercised through Playwright mouse-drag (PanResponder requires real touch gesture semantics on web); the gesture handler code is present and the fix was primarily targeted at iOS native, which the harness is not able to run. Code review of /app/frontend/src/components/sheets.tsx looks clean: core Animated (not Reanimated) inside RN <Modal>, proper mount/unmount via `rendered` state, scrim Pressable has testID, close button has testID, swipe handler releases on dy>120 or vy>0.8. No deprecated expo packages were introduced in this file.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/shots/sheet_01_initial.jpeg",
+    "/app/test_reports/shots/sheet_02_open.jpeg",
+    "/app/test_reports/shots/sheet_03_closed_x.jpeg",
+    "/app/test_reports/shots/sheet_04_closed_scrim.jpeg",
+    "/app/test_reports/shots/sheet_05_final.jpeg"
+  ],
+  "action_items": [
+    "Swipe-to-dismiss gesture should be validated on an actual iOS device/simulator (Expo Go) since Playwright mouse drag on web does not reliably trigger PanResponder; code path looks correct but needs native verification by main agent / user.",
+    "Benign console warning on web: 'Animated: useNativeDriver is not supported ... Falling back to JS-based animation'. Behavior is correct on web; on native iOS the native driver will engage. No change required unless main agent wants to silence the warning on web."
+  ],
+  "critical_code_review_comments": [
+    "Sheet uses core Animated + PanResponder inside <Modal> — matches the stated fix for iOS Reanimated-in-Modal issue.",
+    "Scrim is a full-screen absoluteFill Animated.View with Pressable child using testID='sheet-scrim' and onPress=onClose — tap-anywhere-above-sheet works.",
+    "Close X button is a Pressable with testID='sheet-close', hitSlop=10, correctly positioned (top-right, zIndex=2).",
+    "`rendered` state ensures component unmounts after exit animation completes, so no leftover overlay blocks underlying interactions. Confirmed by successive reopen test.",
+    "KeyboardAvoidingView wraps the sheet — good for iOS keyboard behavior.",
+    "ConfirmSheet reuses the shared Sheet component — fix propagates automatically to all usages."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (not tested)", "frontend": "100% (6/6 required behaviors verified on web; swipe gesture pending native verification)"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Harness route /_sheettest renders the shared Sheet with testIDs: open-sheet, sheet-close, sheet-scrim, t-item, t-add. All work on web preview with mobile viewport. Swipe-down-to-dismiss requires native iOS verification (Playwright mouse drag cannot simulate PanResponder gestures reliably). Login flow is still blocked by Supabase email confirmation setting, so real Grocery/Home sheets cannot be reached — use the harness.",
+  "rca_of_issue": "Original bug: Reanimated animated styles were not committed inside RN <Modal> on iOS, so the scrim appeared transparent and un-tappable, trapping the sheet open. Applied fix (verified on web): replaced Reanimated with React Native core Animated.Value + Animated.timing/spring, added an explicit visible close (X) button, kept backdrop Pressable, and added PanResponder-based swipe-down dismissal on the handle. Scrim backgroundColor rgba(16,16,16,0.45) with animated opacity 0→1 is now visible (verified: parentOpacity=1, backgroundColor=rgba(16,16,16,0.45)). Reopen cycle works repeatedly, confirming unmount via `rendered` state."
+}
