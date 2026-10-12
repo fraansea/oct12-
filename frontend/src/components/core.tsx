@@ -7,7 +7,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } fr
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import Ionicons from "@react-native-vector-icons/ionicons";
-import { makeStyles, radius, spacing, useTheme, type ThemeColors } from "@/src/theme";
+import { makeStyles, radius, spacing, font, useTheme, type ThemeColors } from "@/src/theme";
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -165,15 +165,15 @@ export function GhostButton({
 
 const useButtonStyles = makeStyles((colors) => ({
   primary: {
-    backgroundColor: colors.brandPrimary, borderRadius: radius.pill, minHeight: 54,
+    backgroundColor: colors.brandPrimary, borderRadius: radius.pill, minHeight: 56,
     alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.lg,
   },
-  primaryText: { color: colors.onBrandPrimary, fontSize: 16, fontWeight: "600" },
+  primaryText: { color: colors.onBrandPrimary, fontSize: 16, fontFamily: font.semibold },
   ghost: {
-    backgroundColor: "transparent", borderRadius: radius.pill, minHeight: 54, borderWidth: 1,
+    backgroundColor: "transparent", borderRadius: radius.pill, minHeight: 56, borderWidth: 1.5,
     borderColor: colors.borderStrong, alignItems: "center", justifyContent: "center", paddingHorizontal: spacing.lg,
   },
-  ghostText: { color: colors.onSurface, fontSize: 16, fontWeight: "500" },
+  ghostText: { color: colors.onSurface, fontSize: 16, fontFamily: font.medium },
 }));
 
 // ---------------------------------------------------------------- Typography helpers
@@ -183,13 +183,34 @@ export function SectionHeader({ title, actionLabel, onAction, testID }: {
   const { colors } = useTheme();
   return (
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: spacing.md }}>
-      <Text style={{ fontSize: 20, fontWeight: "600", color: colors.onSurface }}>{title}</Text>
+      <Text style={{ fontSize: 22, fontFamily: font.displayBold, color: colors.onSurface, letterSpacing: -0.5 }}>{title}</Text>
       {actionLabel ? (
         <Pressable testID={testID} onPress={onAction} hitSlop={8}>
-          <Text style={{ fontSize: 14, fontWeight: "500", color: colors.muted }}>{actionLabel} ›</Text>
+          <Text style={{ fontSize: 14, fontFamily: font.medium, color: colors.muted }}>{actionLabel} ›</Text>
         </Pressable>
       ) : null}
     </View>
+  );
+}
+
+// Oversized mixed-weight display headline (Outfit). Pass children (can mix
+// <Text> spans for the regular/bold effect) or a plain string.
+export function Display({ children, size = 34, weight = "bold", color, style }: {
+  children: React.ReactNode;
+  size?: number;
+  weight?: "regular" | "medium" | "semibold" | "bold" | "extra";
+  color?: string;
+  style?: StyleProp<TextStyle>;
+}) {
+  const { colors } = useTheme();
+  const fam = {
+    regular: font.displayRegular, medium: font.displayMedium, semibold: font.displaySemiBold,
+    bold: font.displayBold, extra: font.displayExtra,
+  }[weight];
+  return (
+    <Text style={[{ fontSize: size, lineHeight: size * 1.08, fontFamily: fam, color: color ?? colors.onSurface, letterSpacing: -1 }, style]}>
+      {children}
+    </Text>
   );
 }
 
@@ -209,13 +230,13 @@ export function PillRow({ options, value, onChange, testIDPrefix }: {
             testID={`${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, "-")}`}
             onPress={() => onChange(opt)}
             style={{
-              flexShrink: 0, height: 36, paddingHorizontal: 18, borderRadius: radius.pill,
+              flexShrink: 0, height: 40, paddingHorizontal: 20, borderRadius: radius.pill,
               alignItems: "center", justifyContent: "center",
-              backgroundColor: active ? colors.brandPrimary : colors.surfaceSecondary,
-              borderWidth: active ? 0 : 1, borderColor: colors.border,
+              backgroundColor: active ? colors.surfaceInverse : colors.surfaceSecondary,
+              borderWidth: active ? 0 : 1.5, borderColor: colors.borderStrong,
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: "500", color: active ? colors.onBrandPrimary : colors.onSurfaceTertiary }}>
+            <Text style={{ fontSize: 14, fontFamily: font.semibold, color: active ? colors.onSurfaceInverse : colors.onSurface }}>
               {opt}
             </Text>
           </Pressable>
@@ -230,7 +251,7 @@ export function SegmentedControl({ options, value, onChange, testIDPrefix }: {
 }) {
   const { colors } = useTheme();
   return (
-    <View style={{ flexDirection: "row", backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill, padding: 4 }}>
+    <View style={{ flexDirection: "row", backgroundColor: colors.surfaceTertiary, borderRadius: radius.pill, padding: 5 }}>
       {options.map((opt) => {
         const active = opt === value;
         return (
@@ -239,11 +260,11 @@ export function SegmentedControl({ options, value, onChange, testIDPrefix }: {
             testID={`${testIDPrefix}-${opt.toLowerCase().replace(/\s+/g, "-")}`}
             onPress={() => onChange(opt)}
             style={{
-              flex: 1, height: 36, borderRadius: radius.pill, alignItems: "center", justifyContent: "center",
-              backgroundColor: active ? colors.surfaceSecondary : "transparent",
+              flex: 1, height: 38, borderRadius: radius.pill, alignItems: "center", justifyContent: "center",
+              backgroundColor: active ? colors.surfaceInverse : "transparent",
             }}
           >
-            <Text style={{ fontSize: 13, fontWeight: active ? "600" : "500", color: active ? colors.onSurface : colors.muted }}>
+            <Text style={{ fontSize: 14, fontFamily: active ? font.semibold : font.medium, color: active ? colors.onSurfaceInverse : colors.muted }}>
               {opt}
             </Text>
           </Pressable>
@@ -254,7 +275,7 @@ export function SegmentedControl({ options, value, onChange, testIDPrefix }: {
 }
 
 // ---------------------------------------------------------------- Avatar / IconCircle
-const AVATAR_TONES = ["#E7C98F", "#B7C69A", "#AFC6DD", "#E3B7A5", "#CDB9D9", "#B9D4C8"];
+const AVATAR_TONES = ["#DDF73E", "#C4B5FD", "#FDE047", "#A7F3D0", "#BAE6FD", "#FBCFE8"];
 export function Avatar({ name, size = 40, uri }: { name: string; size?: number; uri?: string | null }) {
   const { colors } = useTheme();
   const initial = (name || "?").trim().charAt(0).toUpperCase() || "?";
@@ -330,10 +351,10 @@ export function MetricTile({ icon, label, value, suffix, badge, onPress, testID 
       <Card style={{ minHeight: 148, justifyContent: "space-between" }}>
         <IconCircle icon={icon} badge={badge} />
         <View>
-          <Text style={{ fontSize: 13, color: colors.muted, fontWeight: "500", marginBottom: 2 }}>{label}</Text>
-          <Text style={{ fontSize: 34, fontWeight: "300", letterSpacing: -1, color: colors.onSurface }}>
+          <Text style={{ fontSize: 13, color: colors.muted, fontFamily: font.medium, marginBottom: 2 }}>{label}</Text>
+          <Text style={{ fontSize: 34, fontFamily: font.displayBold, letterSpacing: -1, color: colors.onSurface }}>
             {value}
-            {suffix ? <Text style={{ fontSize: 15, color: colors.muted, fontWeight: "400" }}> {suffix}</Text> : null}
+            {suffix ? <Text style={{ fontSize: 15, color: colors.muted, fontFamily: font.medium }}> {suffix}</Text> : null}
           </Text>
         </View>
       </Card>
@@ -461,10 +482,10 @@ export function GiantMetric({ value, suffix, label, color }: {
   const { colors } = useTheme();
   return (
     <View style={{ alignItems: "center", gap: 4 }}>
-      {label ? <Text style={{ fontSize: 13, fontWeight: "500", color: colors.muted }}>{label}</Text> : null}
-      <Text style={{ fontSize: 56, fontWeight: "300", letterSpacing: -2, color: color ?? colors.onSurface }}>
+      {label ? <Text style={{ fontSize: 13, fontFamily: font.medium, color: colors.muted }}>{label}</Text> : null}
+      <Text style={{ fontSize: 56, fontFamily: font.displayBold, letterSpacing: -2, color: color ?? colors.onSurface }}>
         {value}
-        {suffix ? <Text style={{ fontSize: 20, color: colors.muted, fontWeight: "400" }}>{suffix}</Text> : null}
+        {suffix ? <Text style={{ fontSize: 20, color: colors.muted, fontFamily: font.medium }}>{suffix}</Text> : null}
       </Text>
     </View>
   );
@@ -473,19 +494,88 @@ export function GiantMetric({ value, suffix, label, color }: {
 export function StatusTag({ label, tone }: { label: string; tone: "fresh" | "soon" | "urgent" | "expired" | "neutral" }) {
   const { colors } = useTheme();
   const map: Record<string, { bg: string; fg: string }> = {
-    fresh: { bg: "#E8EFE2", fg: colors.success },
-    soon: { bg: "#F6EBD3", fg: colors.warning },
-    urgent: { bg: "#F8DFCE", fg: "#B35A1F" },
-    expired: { bg: "#F6DAD5", fg: colors.error },
+    fresh: { bg: colors.accentMint, fg: "#166534" },
+    soon: { bg: colors.accentYellow, fg: "#854D0E" },
+    urgent: { bg: "#FED7AA", fg: "#9A3412" },
+    expired: { bg: colors.accentPink, fg: "#9F1239" },
     neutral: { bg: colors.surfaceTertiary, fg: colors.onSurfaceTertiary },
   };
   const c = map[tone];
   return (
-    <View style={{ backgroundColor: c.bg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: radius.pill, alignSelf: "flex-start" }}>
-      <Text style={{ fontSize: 11, fontWeight: "600", color: c.fg }}>{label}</Text>
+    <View style={{ backgroundColor: c.bg, paddingHorizontal: 12, paddingVertical: 5, borderRadius: radius.pill, alignSelf: "flex-start" }}>
+      <Text style={{ fontSize: 11, fontFamily: font.bold, color: c.fg }}>{label}</Text>
     </View>
   );
 }
 
 export { Ionicons };
 export type { ThemeColors };
+
+// ---------------------------------------------------------------- Tactile extras
+// Solid vibrant accent card (flat, generously rounded). tone maps to theme accents.
+export type AccentTone = "lime" | "lavender" | "yellow" | "mint" | "blue" | "pink" | "ink" | "plain";
+
+export function useAccent(tone: AccentTone): { bg: string; fg: string } {
+  const { colors } = useTheme();
+  switch (tone) {
+    case "lime": return { bg: colors.accentLime, fg: colors.onAccentLime };
+    case "lavender": return { bg: colors.accentLavender, fg: colors.onAccentLavender };
+    case "yellow": return { bg: colors.accentYellow, fg: colors.onAccentYellow };
+    case "mint": return { bg: colors.accentMint, fg: colors.onAccentMint };
+    case "blue": return { bg: colors.accentBlue, fg: colors.onAccentBlue };
+    case "pink": return { bg: colors.accentPink, fg: colors.onAccentPink };
+    case "ink": return { bg: colors.surfaceInverse, fg: colors.onSurfaceInverse };
+    default: return { bg: colors.surfaceSecondary, fg: colors.onSurface };
+  }
+}
+
+export function ColorCard({ tone, children, onPress, style, testID }: {
+  tone: AccentTone;
+  children: React.ReactNode;
+  onPress?: () => void;
+  style?: StyleProp<ViewStyle>;
+  testID?: string;
+}) {
+  const accent = useAccent(tone);
+  const body = (
+    <View style={[{ backgroundColor: accent.bg, borderRadius: radius.lg, padding: spacing.lg, overflow: "hidden" }, style]}>
+      {children}
+    </View>
+  );
+  if (!onPress) return <View testID={testID}>{body}</View>;
+  return <PressableScale testID={testID} onPress={onPress}>{body}</PressableScale>;
+}
+
+// Hashtag / category chip (#work, #shopping)
+export function Chip({ label, tone = "plain", testID }: { label: string; tone?: AccentTone; testID?: string }) {
+  const { colors } = useTheme();
+  const accent = useAccent(tone);
+  const isPlain = tone === "plain";
+  return (
+    <View
+      testID={testID}
+      style={{
+        backgroundColor: isPlain ? "transparent" : accent.bg,
+        borderWidth: isPlain ? 1.5 : 0, borderColor: colors.borderStrong,
+        paddingHorizontal: 12, paddingVertical: 6, borderRadius: radius.pill, alignSelf: "flex-start",
+      }}
+    >
+      <Text style={{ fontSize: 12, fontFamily: font.semibold, color: isPlain ? colors.onSurface : accent.fg }}>{label}</Text>
+    </View>
+  );
+}
+
+// Circular icon button (black or white) placed on cards.
+export function CircleButton({ icon, onPress, tone = "ink", size = 44, testID }: {
+  icon: string; onPress?: () => void; tone?: "ink" | "white"; size?: number; testID: string;
+}) {
+  const { colors } = useTheme();
+  const bg = tone === "ink" ? colors.surfaceInverse : "#FFFFFF";
+  const fg = tone === "ink" ? colors.onSurfaceInverse : colors.onSurface;
+  return (
+    <PressableScale testID={testID} onPress={onPress}
+      style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: bg, alignItems: "center", justifyContent: "center" }}>
+      <Ionicons name={icon as any} size={size * 0.44} color={fg} />
+    </PressableScale>
+  );
+}

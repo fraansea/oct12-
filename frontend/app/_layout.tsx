@@ -2,6 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 import { LogBox, Text, View } from "react-native";
+import { useFonts } from "expo-font";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -57,11 +58,23 @@ function AuthGate() {
   }, [session, household, loading, segments, router]);
 
   return (
-    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#FAFAF8" } }} />
+    <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#F7F6F2" } }} />
   );
 }
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    "Outfit-Regular": require("../assets/fonts/Outfit-Regular.ttf"),
+    "Outfit-Medium": require("../assets/fonts/Outfit-Medium.ttf"),
+    "Outfit-SemiBold": require("../assets/fonts/Outfit-SemiBold.ttf"),
+    "Outfit-Bold": require("../assets/fonts/Outfit-Bold.ttf"),
+    "Outfit-ExtraBold": require("../assets/fonts/Outfit-ExtraBold.ttf"),
+    "Jakarta-Regular": require("../assets/fonts/Jakarta-Regular.ttf"),
+    "Jakarta-Medium": require("../assets/fonts/Jakarta-Medium.ttf"),
+    "Jakarta-SemiBold": require("../assets/fonts/Jakarta-SemiBold.ttf"),
+    "Jakarta-Bold": require("../assets/fonts/Jakarta-Bold.ttf"),
+  });
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -69,7 +82,7 @@ export default function RootLayout() {
           <AppProvider>
             <ToastProvider>
               <OfflineBanner />
-              <AuthGate />
+              {fontsLoaded ? <AuthGate /> : <View style={{ flex: 1, backgroundColor: "#F7F6F2" }} />}
             </ToastProvider>
           </AppProvider>
         </KeyboardProvider>

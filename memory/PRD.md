@@ -51,6 +51,14 @@ Complete production-ready roommate / shared-living management app: household cho
 - Root cause: `src/components/sheets.tsx` animated the scrim with react-native-reanimated inside an RN `<Modal>`; Reanimated animated styles aren't reliably committed inside a Modal on iOS, so the scrim was invisible AND un-tappable.
 - Fix: rewrote `Sheet` with React Native core `Animated` + `PanResponder`. Added visible close button (testID `sheet-close`), kept backdrop tap (testID `sheet-scrim`), added swipe-down-to-dismiss, and mount/unmount via internal `rendered` state so exit animation plays. Verified by testing_agent iteration_4 (X button, backdrop tap, action button, reopen all pass on web; swipe validated by code, not automatable on web).
 
+## UI redesign — "Tactile / Playful" (2026-10-12)
+- New visual language from user-provided references: vibrant solid accent cards (hero lime #DDF73E + lavender/yellow/mint/blue/pink pastels), warm off-white canvas, oversized mixed-weight Outfit headlines, black-pill primary CTAs & segmented toggles, hashtag chips, circular black/white icon buttons, floating pill bottom-nav (already matched).
+- Fonts: added Outfit (display) + Plus Jakarta Sans (text) as static per-weight TTFs in assets/fonts, loaded via expo-font useFonts in app/_layout.tsx (render gated on fontsLoaded).
+- theme.ts: full palette rewrite; kept every existing key (+ gradient tokens repointed to pastels) so no screen breaks; added accent tokens + `font` map.
+- core.tsx (shared primitives → propagate app-wide): restyled PrimaryButton/GhostButton, SegmentedControl & PillRow (black active pill), SectionHeader + new Display headline (Outfit), StatusTag (pastel), Avatar tones, MetricTile/GiantMetric numbers (Outfit). Added ColorCard, Chip, CircleButton, useAccent.
+- Home (tabs/index.tsx) fully redesigned: oversized greeting, lime budget hero, 2×2 pastel stat grid with circular buttons, ink AI card with chips. Welcome screen restyled (Outfit wordmark, lime badge).
+- Verified via temporary no-auth design-preview route (now removed) + welcome screenshot. NOTE: authenticated screens couldn't be auto-tested because email login is still blocked by the user's Supabase "Confirm email" setting.
+
 ## Backlog (static)
 - **P0 (user-side):** enable Google provider (OAuth client steps already provided); rotate the leaked sb_secret key
 - **P1 (Phase 2):** calendar (month/agenda), shared notes (sensitive hidden), AI meal planner (daily/3-day/weekly), notification settings per category, reminders, universal search

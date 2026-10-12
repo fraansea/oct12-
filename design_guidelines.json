@@ -1,68 +1,159 @@
 {
-  "product": "Roomie — shared-living companion",
-  "personality": "premium consumer lifestyle/finance app; editorial, spacious, minimal; oversized numbers as the core visual device; NOT an admin dashboard",
+  "app_name": "Roomie",
+  "personality": "4 Tactile / Playful LIGHT",
+  "personality_one_liner": "A playful, tactile, and highly expressive shared-living hub driven by oversized typography, bold solid-color accent cards, and friendly generously-rounded shapes.",
   "color": {
-    "surface": "#FAFAF8",
-    "onSurface": "#101010",
-    "surfaceSecondary": "#FFFFFF",
-    "onSurfaceSecondary": "#101010",
-    "surfaceTertiary": "#F1F0EC",
-    "onSurfaceTertiary": "#4B4B48",
-    "surfaceInverse": "#101010",
-    "onSurfaceInverse": "#FAFAF8",
-    "muted": "#8E8E88",
-    "brand": "#101010",
-    "onBrand": "#FAFAF8",
-    "brandPrimary": "#101010",
-    "onBrandPrimary": "#FAFAF8",
-    "brandSecondary": "#E9E7E0",
-    "onBrandSecondary": "#101010",
-    "brandTertiary": "#F4F3EF",
-    "onBrandTertiary": "#101010",
-    "success": "#3E7C4F",
-    "onSuccess": "#FFFFFF",
-    "warning": "#B7791F",
-    "onWarning": "#FFFFFF",
-    "error": "#C2412F",
-    "onError": "#FFFFFF",
-    "info": "#2F5E8F",
-    "onInfo": "#FFFFFF",
-    "border": "#E8E6E0",
-    "borderStrong": "#D6D3CA",
-    "divider": "#ECEAE4",
-    "gradHomeA": "#F7E9C4",
-    "gradHomeB": "#EFD9A0",
-    "gradHomeC": "#FAF6EA",
-    "gradInventoryA": "#DCE3B0",
-    "gradInventoryB": "#C2CD8A",
-    "gradInventoryC": "#F1F0DC",
-    "gradAiA": "#F5D9B0",
-    "gradAiB": "#F3E6C8",
-    "gradAiC": "#D7E3F0",
-    "gradExpensesA": "#F3C6AE",
-    "gradExpensesB": "#EFD3A8",
-    "gradExpensesC": "#FAF1E4",
-    "gradTasksA": "#D5DFF0",
-    "gradTasksB": "#E8EDF5",
-    "gradTasksC": "#FAF7F0"
+    "surface": "#F8F7F4",
+    "onSurface": "#1A1A1A",
+    "surfaceSecondary": "#F0EFEB",
+    "onSurfaceSecondary": "#1A1A1A",
+    "surfaceTertiary": "#E6E5DF",
+    "onSurfaceTertiary": "#1A1A1A",
+    "surfaceInverse": "#1A1A1A",
+    "onSurfaceInverse": "#FFFFFF",
+    "brand": "#DDF73E",
+    "brandPrimary": "#DDF73E",
+    "onBrandPrimary": "#1A1A1A",
+    "brandSecondary": "#C4B5FD",
+    "onBrandSecondary": "#1A1A1A",
+    "brandTertiary": "#FEF08A",
+    "onBrandTertiary": "#1A1A1A",
+    "success": "#DDF73E",
+    "onSuccess": "#1A1A1A",
+    "warning": "#FEF08A",
+    "onWarning": "#1A1A1A",
+    "error": "#FECDD3",
+    "onError": "#1A1A1A",
+    "info": "#BAE6FD",
+    "onInfo": "#1A1A1A",
+    "border": "#E6E5DF",
+    "borderStrong": "#1A1A1A",
+    "divider": "#E6E5DF",
+    "muted": "#737373",
+    "onBrand": "#1A1A1A",
+    "accentLime": "#DDF73E",
+    "accentLavender": "#C4B5FD",
+    "accentYellow": "#FEF08A",
+    "accentMint": "#A7F3D0",
+    "accentBlue": "#BAE6FD",
+    "accentPink": "#FECDD3"
   },
   "typography": {
-    "family": "system geometric sans (SF Pro / Roboto default)",
-    "metric": { "size": 56, "weight": "300", "letterSpacing": -2 },
-    "heading": { "size": 30, "weight": "600", "letterSpacing": -0.5 },
-    "sectionTitle": { "size": 20, "weight": "600" },
-    "cardLabel": { "size": 13, "weight": "500" },
-    "body": { "size": 15, "weight": "400" }
+    "displayFontFamily": "Outfit",
+    "textFontFamily": "Plus Jakarta Sans",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 24,
+      "2xl": 32,
+      "3xl": 48
+    }
   },
-  "spacing": { "xs": 4, "sm": 8, "md": 16, "lg": 24, "xl": 32, "xxl": 48 },
-  "radius_tokens": { "sm": 16, "md": 24, "lg": 28, "xl": 32, "pill": 999 },
-  "rules": [
-    "large rounded cards 24-36px, no harsh shadows, subtle border or tonal separation",
-    "pill filters in one horizontal scroller, active = solid black, 36pt chips",
-    "one blurred gradient hero per section max",
-    "status shown in words as well as color",
-    "44px minimum tap targets",
-    "floating black pill bottom nav with larger circular + in the middle",
-    "preserve whitespace over density"
+  "spacing": {
+    "rule": "Generous spacing. Allow the oversized text to breathe. Use md/lg between text, and xl/2xl between sections.",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 8,
+    "md": 16,
+    "lg": 24,
+    "pill": 999
+  },
+  "shadow_tier": "1",
+  "navigation": "bottom_tabs",
+  "icon_set": "Feather",
+  "glassmorphism": {
+    "enabled": "true",
+    "do's": [
+      "Use for floating pill bottom navigation bar with a frosted glass background",
+      "Use for sticky headers over scrolling content"
+    ],
+    "dont's": [
+      "Do not use on the solid vibrant accent cards"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Home Dashboard",
+      "purpose": "A vibrant, welcoming overview of the house's current state with personalized greetings, quick actions, and top priorities.",
+      "states": {
+        "loading": "Centered spinner on warm off-white canvas.",
+        "empty": "N/A - Home is never fully empty, just shows zero states on cards.",
+        "error": "Readable error message on off-white with black retry pill button."
+      },
+      "layout": "Header: HUGE mixed-weight headline ('Hello 👋 Taylor!') with user avatar. Add a small 'Best result' chip above or below. Main content: A large pastel-yellow or lime-green hero card ('You are doing great') with a pill segmented toggle (Weekly/Monthly) where active is a solid black pill. Stacked colorful cards for chores/updates: mint card for 'Updates', black header card for 'Tasks [High]' with hashtag chips (#work, #shopping). Use circular black & white icon buttons for actions (+ or >) placed directly on the vibrant cards."
+    },
+    {
+      "name": "Shared Expenses & Budget",
+      "purpose": "Track household spending using stacked colorful category cards and bold numeric charts.",
+      "states": {
+        "loading": "Centered spinner.",
+        "empty": "Soft pink empty state card with an illustration and a prompt to add an expense.",
+        "error": "Error text with retry button."
+      },
+      "layout": "Header: Tiny 'Expenses' label above a MASSIVE headline ('Week' or '$120.00'). Segmented pill toggle (All / Automated / Manual). Visual: A vibrant lime/chartreuse hero card with a dotted line chart or big bar chart. Below: Overlapping stacked category cards, each a different pastel (lavender, lime, purple, periwinkle) showing Merchant + Category + Amount. Add a floating '+' circular black button for adding expenses."
+    },
+    {
+      "name": "Kitchen & AI Meal Planner",
+      "purpose": "Manage inventory and suggest meals using engaging imagery and vibrant chips.",
+      "states": {
+        "loading": "Centered spinner.",
+        "empty": "Illustration of an empty fridge with a black primary CTA 'Add Groceries'.",
+        "error": "Error text with retry."
+      },
+      "layout": "Large photo cards (use real imagery with top-down gradient scrims to ensure text readability) for Meal Suggestions. Overlay text in bottom 30%. Use pastel cards (mint, yellow) for 'Expiring soon' items. Incorporate circular icon buttons to quickly add to grocery list."
+    }
+  ],
+  "images": {
+    "avatar_1": {
+      "url": "https://images.unsplash.com/photo-1757744705465-ea08b0ddc38a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwyfHxwb3J0cmFpdCUyMHNtaWxpbmclMjB5b3VuZyUyMGFkdWx0fGVufDB8fHx8MTc5MTc4NzEwOXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Smiling young man"
+    },
+    "avatar_2": {
+      "url": "https://images.unsplash.com/photo-1662850886700-4ec19bd30d11?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwxfHxwb3J0cmFpdCUyMHNtaWxpbmclMjB5b3VuZyUyMGFkdWx0fGVufDB8fHx8MTc5MTc4NzEwOXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Smiling young woman with curly hair"
+    },
+    "avatar_3": {
+      "url": "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHwzfHxwb3J0cmFpdCUyMHNtaWxpbmclMjB5b3VuZyUyMGFkdWx0fGVufDB8fHx8MTc5MTc4NzEwOXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Smiling young man"
+    },
+    "meal_prep": {
+      "url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjh8MHwxfHNlYXJjaHwxfHxoZWFsdGh5JTIwbWVhbCUyMHByZXAlMjBib3dsfGVufDB8fHx8MTc5MTc4NzEwOXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Healthy meal prep bowl"
+    },
+    "pantry": {
+      "url": "https://images.unsplash.com/photo-1645567454567-901dc409551b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA4Mzl8MHwxfHNlYXJjaHwxfHxraXRjaGVuJTIwcGFudHJ5JTIwc2hlbHZlcyUyMG9yZ2FuaXplZHxlbnwwfHx8fDE3OTE3ODcxMDl8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Organized kitchen pantry shelves"
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly use the '4 Tactile / Playful LIGHT' personality with a 'Warm Off-White' canvas.",
+    "Implement oversized, bold, mixed-weight typography using Outfit for display and Plus Jakarta Sans for body text. Explicit user override: Allow using weights up to 700 (bold) for the mixed-weight oversized headline effect as requested by the user.",
+    "Use solid vibrant accent colors for cards (Lime, Lavender, Pastel Yellow, Mint, Soft Blue, Soft Pink) directly mapped from the color tokens. Avoid gradients on these cards to keep them flat, bold, and solid.",
+    "Ensure all buttons are either circular (black & white icon buttons like `+` or `>`) or fully rounded pills. No rectangular buttons.",
+    "The Bottom Navigation MUST be a floating pill shape with a glass/frosted background, inset from the edges, featuring a solid circular indicator for the active tab.",
+    "For segmented toggles (e.g., Weekly/Monthly), the active state must be a solid black pill (surfaceInverse) with white text, while inactive states are plain text.",
+    "Explicit user override: Include inline emojis in the large greeting headlines exactly as requested by the user.",
+    "Use hashtag chips (#work, #shopping) inside task cards for categorization.",
+    "Add 'stacked overlapping' behavior for category cards in the Expenses section to match the user's Open-Banking reference."
   ]
 }

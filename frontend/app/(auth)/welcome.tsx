@@ -9,7 +9,7 @@ import { APP_NAME } from "@/src/config";
 import { useApp } from "@/src/context/AppContext";
 import { supabase } from "@/src/lib/supabase";
 import { PrimaryButton, GhostButton, useToast } from "@/src/components/core";
-import { useTheme, spacing, radius } from "@/src/theme";
+import { useTheme, spacing, radius, font } from "@/src/theme";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -64,14 +64,14 @@ export default function Welcome() {
         <View style={{ flex: 1, gap: spacing.md }}>
           <View
             style={{
-              width: 72, height: 72, borderRadius: 24, backgroundColor: colors.surfaceInverse,
+              width: 72, height: 72, borderRadius: 26, backgroundColor: colors.accentLime,
               alignItems: "center", justifyContent: "center",
             }}
           >
-            <Text style={{ color: colors.onSurfaceInverse, fontSize: 34, fontWeight: "700" }}>R</Text>
+            <Text style={{ color: colors.onAccentLime, fontSize: 36, fontFamily: font.displayExtra }}>R</Text>
           </View>
-          <Text style={{ fontSize: 44, fontWeight: "700", letterSpacing: -1.5, color: colors.onSurface }}>{APP_NAME}</Text>
-          <Text style={{ fontSize: 17, color: colors.onSurfaceTertiary, lineHeight: 26, maxWidth: 300 }}>
+          <Text style={{ fontSize: 52, fontFamily: font.displayExtra, letterSpacing: -2, color: colors.onSurface, marginTop: spacing.sm }}>{APP_NAME}</Text>
+          <Text style={{ fontSize: 18, fontFamily: font.regular, color: colors.onSurfaceTertiary, lineHeight: 27, maxWidth: 320 }}>
             Chores, groceries, expenses and dinner — one calm home for everyone you live with.
           </Text>
         </View>
