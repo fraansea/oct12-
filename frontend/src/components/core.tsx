@@ -524,7 +524,7 @@ export function useAccent(tone: AccentTone): { bg: string; fg: string } {
     case "mint": return { bg: colors.accentMint, fg: colors.onAccentMint };
     case "blue": return { bg: colors.accentBlue, fg: colors.onAccentBlue };
     case "pink": return { bg: colors.accentPink, fg: colors.onAccentPink };
-    case "ink": return { bg: colors.surfaceInverse, fg: colors.onSurfaceInverse };
+    case "ink": return { bg: "#161616", fg: "#FFFFFF" }; // fixed — an ink card reads the same in both themes
     default: return { bg: colors.surfaceSecondary, fg: colors.onSurface };
   }
 }
@@ -569,9 +569,8 @@ export function Chip({ label, tone = "plain", testID }: { label: string; tone?: 
 export function CircleButton({ icon, onPress, tone = "ink", size = 44, testID }: {
   icon: string; onPress?: () => void; tone?: "ink" | "white"; size?: number; testID: string;
 }) {
-  const { colors } = useTheme();
-  const bg = tone === "ink" ? colors.surfaceInverse : "#FFFFFF";
-  const fg = tone === "ink" ? colors.onSurfaceInverse : colors.onSurface;
+  const bg = tone === "ink" ? "#161616" : "#FFFFFF";
+  const fg = tone === "ink" ? "#FFFFFF" : "#161616";
   return (
     <PressableScale testID={testID} onPress={onPress}
       style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: bg, alignItems: "center", justifyContent: "center" }}>

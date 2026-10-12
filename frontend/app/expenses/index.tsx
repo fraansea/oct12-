@@ -6,11 +6,17 @@ import { useApp, displayNameOf } from "@/src/context/AppContext";
 import { computeBalances, useExpenses, useSettlements } from "@/src/lib/hooks";
 import { supabase } from "@/src/lib/supabase";
 import { fmtDate, fmtMoney, fmtMoneyDecimals } from "@/src/lib/format";
-import { EmptyState, IconCircle, PillRow, PressableScale, SkeletonCard, useToast } from "@/src/components/core";
+import {
+  CircleButton, ColorCard, EmptyState, IconCircle, PillRow, PressableScale,
+  SkeletonCard, useToast, Ionicons, type AccentTone,
+} from "@/src/components/core";
 import { ConfirmSheet } from "@/src/components/sheets";
-import { useTheme, spacing, radius } from "@/src/theme";
+import { useTheme, spacing, radius, font } from "@/src/theme";
 
 const FILTERS = ["All", "Groceries", "Bills", "Rent", "Food", "Other"];
+const CAT_TONE: Record<string, AccentTone> = {
+  groceries: "mint", bills: "blue", utilities: "blue", rent: "lavender", food: "yellow", other: "pink",
+};
 const CATEGORY_ICON: Record<string, string> = {
   groceries: "cart", bills: "flash", utilities: "flash", rent: "home", food: "restaurant", other: "receipt",
 };
@@ -37,12 +43,6 @@ export default function Expenses() {
   );
   const monthTotal = thisMonth.reduce((s, e) => s + Number(e.amount), 0);
   const totalParts = fmtMoneyDecimals(monthTotal);
-
-  const byCategory = useMemo(() => {
-    const map: Record<string, number> = {};
-    for (const e of thisMonth) map[e.category] = (map[e.category] ?? 0) + Number(e.amount);
-    return map;
-  }, [thisMonth]);
 
   const { pairs } = useMemo(
     () => computeBalances(expenses.data ?? [], settlements.data ?? [], members.map((m) => m.user_id)),
@@ -78,99 +78,61 @@ export default function Expenses() {
         data={filtered}
         keyExtractor={(e) => e.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 110 }}
         ListHeaderComponent={
           <View style={{ paddingHorizontal: spacing.lg, paddingTop: insets.top + spacing.md, gap: spacing.lg }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
               <Pressable testID="expenses-back" onPress={() => router.back()} hitSlop={12}>
                 <IconCircle icon="chevron-back" />
               </Pressable>
-              <Text style={{ flex: 1, fontSize: 26, fontWeight: "600", letterSpacing: -0.5, color: colors.onSurface }}>Expenses</Text>
+              <View style={{ flex: 1 }} />
               <PressableScale testID="expenses-budget-link" onPress={() => router.push("/budget")}>
                 <IconCircle icon="wallet-outline" />
               </PressableScale>
             </View>
 
-            {/* Monthly total */}
-            <View style={{ alignItems: "center", paddingVertical: spacing.sm }}>
-              <Text style={{ fontSize: 13, color: colors.muted, fontWeight: "500" }}>This month · household spending</Text>
-              <Text testID="expenses-month-total" style={{ fontSize: 56, fontWeight: "300", letterSpacing: -2, color: colors.onSurface }}>
+            {/* Tiny label + massive headline */}
+            <View>
+              <Text style={{ fontSize: 14, fontFamily: font.medium, color: colors.muted }}>This month · household spending</Text>
+              <Text testID="expenses-month-total" style={{ fontSize: 60, fontFamily: font.displayExtra, letterSpacing: -2.5, color: colors.onSurface, marginTop: 2 }}>
                 {totalParts.whole}
-                <Text style={{ fontSize: 24, color: colors.muted }}>{totalParts.decimals}</Text>
+                <Text style={{ fontSize: 26, fontFamily: font.displayBold, color: colors.muted }}>{totalParts.decimals}</Text>
               </Text>
             </View>
 
-            {/* Category cards */}
-            <FlatList
-              horizontal
-              data={["groceries", "bills", "rent", "food", "other"]}
-              keyExtractor={(c) => c}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ gap: spacing.md }}
-              renderItem={({ item }) => (
-                <View style={{
-                  width: 132, backgroundColor: colors.surfaceSecondary, borderRadius: radius.md,
-                  borderWidth: 1, borderColor: colors.border, padding: spacing.md, gap: spacing.sm,
-                }}>
-                  <IconCircle icon={CATEGORY_ICON[item] ?? "receipt"} size={36} />
-                  <Text style={{ fontSize: 12, color: colors.muted, textTransform: "capitalize" }}>{item}</Text>
-                  <Text style={{ fontSize: 20, fontWeight: "500", letterSpacing: -0.5, color: colors.onSurface }}>
-                    {fmtMoney(byCategory[item] ?? 0)}
-                  </Text>
-                </View>
-              )}
-            />
-
-            {/* Black action band */}
-            <View style={{
-              backgroundColor: colors.surfaceInverse, borderRadius: radius.pill, padding: 6,
-              flexDirection: "row", gap: 6,
-            }}>
-              {[
-                { label: "Add expense", icon: "add", action: () => router.push("/expenses/new"), testID: "expenses-add" },
-                { label: "Food budget", icon: "wallet", action: () => router.push("/budget"), testID: "expenses-budget" },
-              ].map((a) => (
-                <Pressable key={a.label} testID={a.testID} onPress={a.action}
-                  style={{
-                    flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
-                    height: 44, borderRadius: radius.pill, borderWidth: 1, borderColor: "rgba(250,250,248,0.25)",
-                  }}>
-                  <IconCircle icon={a.icon} size={28} tone="frosted" />
-                  <Text style={{ color: colors.onSurfaceInverse, fontSize: 14, fontWeight: "500" }}>{a.label}</Text>
-                </Pressable>
-              ))}
+            {/* Filters */}
+            <View style={{ marginHorizontal: -spacing.lg }}>
+              <PillRow testIDPrefix="expenses-filter" options={FILTERS} value={filter} onChange={setFilter} />
             </View>
 
             {/* Balances */}
             {pairs.length > 0 ? (
-              <View style={{
-                backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, borderWidth: 1,
-                borderColor: colors.border, padding: spacing.lg, gap: spacing.md,
-              }}>
-                <Text style={{ fontSize: 16, fontWeight: "600", color: colors.onSurface }}>Settle up</Text>
+              <View style={{ backgroundColor: colors.surfaceSecondary, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg, gap: spacing.md }}>
+                <Text style={{ fontSize: 16, fontFamily: font.displayBold, color: colors.onSurface }}>Settle up</Text>
                 {pairs.map((p, i) => (
                   <View key={i} style={{ flexDirection: "row", alignItems: "center", gap: spacing.md }}>
                     <View style={{ flex: 1 }}>
-                      <Text testID={`balance-pair-${i}`} style={{ fontSize: 14, color: colors.onSurface }}>
-                        <Text style={{ fontWeight: "600" }}>{displayNameOf(memberById(p.from))}</Text>
+                      <Text testID={`balance-pair-${i}`} style={{ fontSize: 14, fontFamily: font.regular, color: colors.onSurface }}>
+                        <Text style={{ fontFamily: font.bold }}>{displayNameOf(memberById(p.from))}</Text>
                         {" owes "}
-                        <Text style={{ fontWeight: "600" }}>{displayNameOf(memberById(p.to))}</Text>
+                        <Text style={{ fontFamily: font.bold }}>{displayNameOf(memberById(p.to))}</Text>
                         {` ${fmtMoney(p.amount)}`}
                       </Text>
                     </View>
                     {(p.from === uid || p.to === uid) ? (
                       <Pressable testID={`settle-btn-${i}`} onPress={() => setSettlePair(p)}
-                        style={{
-                          backgroundColor: colors.surfaceInverse, borderRadius: radius.pill,
-                          paddingHorizontal: 14, paddingVertical: 8,
-                        }}>
-                        <Text style={{ color: colors.onSurfaceInverse, fontSize: 12, fontWeight: "600" }}>Mark settled</Text>
+                        style={{ backgroundColor: colors.surfaceInverse, borderRadius: radius.pill, paddingHorizontal: 16, paddingVertical: 9 }}>
+                        <Text style={{ color: colors.onSurfaceInverse, fontSize: 12, fontFamily: font.semibold }}>Mark settled</Text>
                       </Pressable>
                     ) : null}
                   </View>
                 ))}
               </View>
             ) : null}
+
+            <Text style={{ fontSize: 22, fontFamily: font.displayBold, color: colors.onSurface, letterSpacing: -0.5, marginTop: spacing.xs }}>
+              {filter === "All" ? "All expenses" : filter}
+            </Text>
           </View>
         }
         ListEmptyComponent={
@@ -187,38 +149,48 @@ export default function Expenses() {
             />
           )
         }
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
+          const tone = CAT_TONE[item.category] ?? "pink";
           const splits = item.expense_splits ?? [];
           return (
-            <View style={{
-              marginHorizontal: spacing.lg, marginTop: spacing.sm,
-              backgroundColor: colors.surfaceSecondary, borderRadius: radius.md, borderWidth: 1,
-              borderColor: colors.border, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.md,
-            }}>
-              <IconCircle icon={CATEGORY_ICON[item.category] ?? "receipt"} size={40} />
-              <View style={{ flex: 1, gap: 2 }}>
-                <Text style={{ fontSize: 15, fontWeight: "600", color: colors.onSurface }}>{item.title}</Text>
-                <Text style={{ fontSize: 12, color: colors.muted }}>
-                  Paid by {displayNameOf(memberById(item.paid_by))} · {fmtDate(item.expense_date)}
-                </Text>
-                {splits.length ? (
-                  <Text style={{ fontSize: 11, color: colors.muted }}>
-                    Split: {splits.map((s) => `${displayNameOf(memberById(s.user_id)).split(" ")[0]} ${fmtMoney(s.share_amount)}`).join(" · ")}
+            <PressableScale
+              testID={`expense-${item.id}`}
+              onPress={() => router.push("/expenses/new")}
+              style={{ paddingHorizontal: spacing.lg, marginTop: index === 0 ? spacing.sm : -spacing.md }}
+            >
+              <ColorCard tone={tone} style={{ paddingTop: index === 0 ? spacing.lg : spacing.lg + spacing.md }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                    <View style={{ width: 30, height: 30, borderRadius: 15, backgroundColor: "#161616", alignItems: "center", justifyContent: "center" }}>
+                      <Ionicons name={(CATEGORY_ICON[item.category] ?? "receipt") as any} size={15} color="#FFFFFF" />
+                    </View>
+                    <Text style={{ fontSize: 13, fontFamily: font.semibold, color: "#1A1A1A", textTransform: "capitalize" }}>{item.category}</Text>
+                  </View>
+                  <Text style={{ fontSize: 12, fontFamily: font.medium, color: "#1A1A1A", opacity: 0.6 }}>{fmtDate(item.expense_date)}</Text>
+                </View>
+
+                <View style={{ flexDirection: "row", alignItems: "flex-end", justifyContent: "space-between", marginTop: spacing.md }}>
+                  <View style={{ flex: 1, paddingRight: spacing.md }}>
+                    <Text numberOfLines={1} style={{ fontSize: 22, fontFamily: font.displayBold, color: "#1A1A1A", letterSpacing: -0.5 }}>{item.title}</Text>
+                    <Text style={{ fontSize: 12, fontFamily: font.regular, color: "#1A1A1A", opacity: 0.6, marginTop: 1 }}>
+                      Paid by {displayNameOf(memberById(item.paid_by))}
+                      {splits.length ? ` · split ${splits.length} ways` : ""}
+                    </Text>
+                  </View>
+                  <Text style={{ fontSize: 24, fontFamily: font.displayExtra, color: "#1A1A1A", letterSpacing: -1 }}>
+                    −{fmtMoney(item.amount)}
                   </Text>
-                ) : null}
-              </View>
-              <Text style={{ fontSize: 17, fontWeight: "500", letterSpacing: -0.3, color: colors.onSurface }}>
-                {fmtMoney(item.amount)}
-              </Text>
-            </View>
+                </View>
+              </ColorCard>
+            </PressableScale>
           );
         }}
-        ListFooterComponent={
-          <View style={{ marginTop: spacing.md }}>
-            <PillRow testIDPrefix="expenses-filter" options={FILTERS} value={filter} onChange={setFilter} />
-          </View>
-        }
       />
+
+      {/* Floating add */}
+      <View style={{ position: "absolute", right: spacing.lg, bottom: insets.bottom + 16 }}>
+        <CircleButton testID="expenses-add" icon="add" tone="ink" size={60} onPress={() => router.push("/expenses/new")} />
+      </View>
 
       <ConfirmSheet
         visible={!!settlePair}

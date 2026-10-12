@@ -86,8 +86,8 @@ export default function Home() {
             <ColorCard tone="lime" testID="home-budget-card" onPress={() => router.push("/budget")}>
               <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                  <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: colors.surfaceInverse, alignItems: "center", justifyContent: "center" }}>
-                    <Ionicons name="wallet" size={16} color={colors.onSurfaceInverse} />
+                  <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: "#161616", alignItems: "center", justifyContent: "center" }}>
+                    <Ionicons name="wallet" size={16} color="#FFFFFF" />
                   </View>
                   <Text style={{ fontFamily: font.semibold, fontSize: 14, color: colors.onAccentLime }}>
                     {household?.name ?? "Home"} · Food budget
@@ -120,12 +120,12 @@ export default function Home() {
                     <ColorCard key={s.key} tone={s.tone} testID={s.testID} onPress={() => router.push(s.route as any)}
                       style={{ flex: 1, minHeight: 124, justifyContent: "space-between" }}>
                       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <Text style={{ fontFamily: font.semibold, fontSize: 14, color: colors.onSurface }}>{s.label}</Text>
+                        <Text style={{ fontFamily: font.semibold, fontSize: 14, color: "#1A1A1A" }}>{s.label}</Text>
                         <CircleButton testID={`${s.testID}-go`} icon="arrow-forward" tone="ink" size={32} onPress={() => router.push(s.route as any)} />
                       </View>
-                      <Text style={{ fontFamily: font.displayExtra, fontSize: 34, letterSpacing: -1.5, color: colors.onSurface, marginTop: spacing.md }}>
+                      <Text style={{ fontFamily: font.displayExtra, fontSize: 34, letterSpacing: -1.5, color: "#1A1A1A", marginTop: spacing.md }}>
                         {s.value}
-                        {s.suffix ? <Text style={{ fontFamily: font.medium, fontSize: 13, color: colors.onSurface }}> {s.suffix}</Text> : null}
+                        {s.suffix ? <Text style={{ fontFamily: font.medium, fontSize: 13, color: "#1A1A1A" }}> {s.suffix}</Text> : null}
                       </Text>
                     </ColorCard>
                   ))}
@@ -141,11 +141,11 @@ export default function Home() {
                 </View>
                 <CircleButton testID="home-meal-open" icon="arrow-forward" tone="white" size={40} onPress={() => router.push("/ai")} />
               </View>
-              <Text style={{ fontFamily: font.regular, fontSize: 13, color: colors.onSurfaceInverse, opacity: 0.6, marginTop: spacing.lg }}>{"Tonight's suggestion"}</Text>
-              <Text style={{ fontFamily: font.displayBold, fontSize: 26, letterSpacing: -0.6, color: colors.onSurfaceInverse, marginTop: 2 }}>
+              <Text style={{ fontFamily: font.regular, fontSize: 13, color: "#FFFFFF", opacity: 0.6, marginTop: spacing.lg }}>{"Tonight's suggestion"}</Text>
+              <Text style={{ fontFamily: font.displayBold, fontSize: 26, letterSpacing: -0.6, color: "#FFFFFF", marginTop: 2 }}>
                 What can we cook? 🍳
               </Text>
-              <Text style={{ fontFamily: font.regular, fontSize: 14, color: colors.onSurfaceInverse, opacity: 0.7, marginTop: 6, lineHeight: 20 }}>
+              <Text style={{ fontFamily: font.regular, fontSize: 14, color: "#FFFFFF", opacity: 0.7, marginTop: 6, lineHeight: 20 }}>
                 {inventory.data?.length
                   ? `Kitchen AI checks your ${inventory.data.length} pantry items and budget first.`
                   : "Add what's in your kitchen and I'll plan dinner around it."}
@@ -199,8 +199,8 @@ export default function Home() {
                         <ColorCard tone="yellow" style={{ width: 164, minHeight: 124, justifyContent: "space-between" }}>
                           <StatusTag label={e.label} tone={e.tone} />
                           <View>
-                            <Text style={{ fontSize: 17, fontFamily: font.displayBold, color: colors.onSurface }}>{item.name}</Text>
-                            <Text style={{ fontSize: 12, fontFamily: font.regular, color: colors.onSurface, opacity: 0.6 }}>{item.quantity} {item.unit}</Text>
+                            <Text style={{ fontSize: 17, fontFamily: font.displayBold, color: "#1A1A1A" }}>{item.name}</Text>
+                            <Text style={{ fontSize: 12, fontFamily: font.regular, color: "#1A1A1A", opacity: 0.6 }}>{item.quantity} {item.unit}</Text>
                           </View>
                         </ColorCard>
                       </PressableScale>

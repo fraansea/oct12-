@@ -46,6 +46,7 @@ function AuthGate() {
   useEffect(() => {
     if (loading) return;
     const root = segments[0] as string | undefined;
+    if (root === "_designpreview") return; // TEMP: design preview route
     const inAuth = root === "(auth)";
     const inOnboarding = root === "onboarding";
     if (!session && !inAuth) {

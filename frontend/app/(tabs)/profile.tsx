@@ -6,9 +6,9 @@ import { useApp } from "@/src/context/AppContext";
 import { useExpenses, useInventory, useTasks, useWallet } from "@/src/lib/hooks";
 import { fmtMoney } from "@/src/lib/format";
 import { APP_NAME } from "@/src/config";
-import { Avatar, IconCircle, useToast } from "@/src/components/core";
+import { Avatar, IconCircle, SegmentedControl, useToast } from "@/src/components/core";
 import { ConfirmSheet } from "@/src/components/sheets";
-import { useTheme, spacing, radius } from "@/src/theme";
+import { useTheme, spacing, radius, font, setThemeMode, useThemeMode, type ThemeMode } from "@/src/theme";
 
 export default function Profile() {
   const router = useRouter();
@@ -24,6 +24,9 @@ export default function Profile() {
   const [aboutOpen, setAboutOpen] = useState(false);
 
   const uid = session?.user.id ?? "";
+  const mode = useThemeMode();
+  const MODE_LABELS: Record<ThemeMode, string> = { light: "Light", dark: "Dark", system: "System" };
+  const LABEL_TO_MODE: Record<string, ThemeMode> = { Light: "light", Dark: "dark", System: "system" };
   const stats = useMemo(() => ({
     done: (tasks.data ?? []).filter((t) => t.completed_by === uid).length,
     paid: (expenses.data ?? []).filter((e) => e.paid_by === uid).reduce((s, e) => s + Number(e.amount), 0),
@@ -64,6 +67,17 @@ export default function Profile() {
           <StatCard label="Items added" value={String(stats.added)} />
           <StatCard label="Contributed" value={fmtMoney(stats.contributed)} />
         </View>
+      </View>
+
+      {/* Appearance */}
+      <View style={{ marginBottom: spacing.xl, gap: spacing.md }}>
+        <Text style={{ fontSize: 16, fontFamily: font.displayBold, color: colors.onSurface }}>Appearance</Text>
+        <SegmentedControl
+          testIDPrefix="profile-theme"
+          options={["Light", "Dark", "System"]}
+          value={MODE_LABELS[mode]}
+          onChange={(v) => setThemeMode(LABEL_TO_MODE[v])}
+        />
       </View>
 
       {/* Menu */}
